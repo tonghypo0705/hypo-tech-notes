@@ -41,7 +41,17 @@
 - 虚拟机设置 → 网络适配器 → 选择 “NAT: 使用宿主网络共享访问”  
 - 保存设置并启动虚拟机
 
-![image-20250621112408741](%E4%BD%BF%E7%94%A8%20VMware%20Workstation%20Pro%20%E6%90%AD%E5%BB%BA%20NAT%20%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%9B%86%E7%BE%A4%E7%8E%AF%E5%A2%83.assets/image-20250621112408741.png)
+<img src="assets/%E4%BD%BF%E7%94%A8%20VMware%20Workstation%20Pro%20%E6%90%AD%E5%BB%BA%20NAT%20%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%9B%86%E7%BE%A4%E7%8E%AF%E5%A2%83/image-20250621114051466.png" style="zoom:25%;" />
+
+<img src="assets/%E4%BD%BF%E7%94%A8%20VMware%20Workstation%20Pro%20%E6%90%AD%E5%BB%BA%20NAT%20%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%9B%86%E7%BE%A4%E7%8E%AF%E5%A2%83/image-20250621114135054.png" alt="image-20250621114135054" style="zoom:25%;" />
+
+- 初始化centos系统
+
+<img src="assets/%E4%BD%BF%E7%94%A8%20VMware%20Workstation%20Pro%20%E6%90%AD%E5%BB%BA%20NAT%20%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%9B%86%E7%BE%A4%E7%8E%AF%E5%A2%83/image-20250621141945771.png" alt="image-20250621141945771" style="zoom:25%;" />
+
+<img src="assets/%E4%BD%BF%E7%94%A8%20VMware%20Workstation%20Pro%20%E6%90%AD%E5%BB%BA%20NAT%20%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%9B%86%E7%BE%A4%E7%8E%AF%E5%A2%83/image-20250621142014077.png" alt="image-20250621142014077" style="zoom:25%;" />
+
+<img src="assets/%E4%BD%BF%E7%94%A8%20VMware%20Workstation%20Pro%20%E6%90%AD%E5%BB%BA%20NAT%20%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%BC%8F%E7%9A%84%E8%99%9A%E6%8B%9F%E6%9C%BA%E9%9B%86%E7%BE%A4%E7%8E%AF%E5%A2%83/image-20250621142054025.png" alt="image-20250621142054025" style="zoom:25%;" />
 
 ---
 
@@ -63,12 +73,12 @@ vi ifcfg-ens33
 
 配置为静态 IP，例如：
 
-```ini
+```
 TYPE=Ethernet
-BOOTPROTO=static
+BOOTPROTO=static//注意由dhcp修改为static
 NAME=ens33
 DEVICE=ens33
-ONBOOT=yes
+ONBOOT=yes//由no改为yes
 IPADDR=192.168.100.100
 NETMASK=255.255.255.0
 GATEWAY=192.168.100.2
@@ -81,73 +91,3 @@ DNS1=8.8.8.8
 service network restart
 ```
 
-> 💡 如果你使用的是 `NetworkManager`，可以改用 `nmcli` 工具进行配置。
-
----
-
-## 五、VMware NAT 设置说明（可选端口映射）
-
-打开 VMware 菜单：  
-“编辑” → “虚拟网络编辑器” → 管理 VMnet8 设置：
-
-- 确保启用 DHCP
-- 配置子网（如：192.168.100.0/24）
-- 设置网关地址（如：192.168.100.2）
-- 添加端口转发（如把主机 2222 端口转发到虚拟机 22 端口）
-
-示例端口映射表：
-
-| 协议 | 主机端口 | 虚拟机 IP        | 虚拟机端口 |
-|------|----------|------------------|------------|
-| TCP  | 2222     | 192.168.100.100  | 22         |
-
----
-
-## 六、测试验证
-
-### 1. 虚拟机访问外网
-
-在虚拟机中执行：
-
-```bash
-ping www.baidu.com
-```
-
-如果能通说明 NAT 上网成功。
-
-### 2. 主机访问虚拟机
-
-通过端口映射访问虚拟机 SSH：
-
-```bash
-ssh root@127.0.0.1 -p 2222
-```
-
----
-
-## 七、总结
-
-通过本文搭建的 NAT 虚拟机环境，具备如下优势：
-
-- 虚拟机可访问外网，适合拉取依赖和更新
-- 主机与虚拟机通信简便
-- 可用于构建小型本地分布式集群环境
-
-后续你可以基于此环境部署 Zookeeper、Kafka、Hadoop 等服务，完成本地集群测试。
-
----
-
-## 八、附录：常见问题排查
-
-### 虚拟机无法联网？
-- 检查网卡名称是否正确（`ip a` 查看）
-- 检查 `ifcfg-ens33` 文件内容是否有误
-- 检查是否启用了防火墙（可暂时关闭 `systemctl stop firewalld`）
-
-### 主机无法连接虚拟机？
-- 检查 VMware 的 NAT 设置是否添加了端口映射
-- 检查虚拟机是否开启 SSH 服务
-
----
-
-> 📌 本文参考了内部文档《VM虚拟机的NAT模式安装》，并结合实际操作经验编写。
