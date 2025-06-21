@@ -1,4 +1,4 @@
-# Maven `settings.xml` 全面解析与实战总结
+# Maven 配置文件全面解析与实战总结
 
 在日常开发中，Maven 是构建和依赖管理的核心工具，而 `settings.xml` 则是控制 Maven 本地行为的重要配置文件。本文将对 `settings.xml` 中常用标签进行详细讲解，结合真实工作场景和配置文件案例，帮助你更深入理解 Maven 的仓库管理机制。
 
