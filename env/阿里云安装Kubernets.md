@@ -24,7 +24,7 @@ systemctl enable docker --now
 sudo mkdir -p /etc/docker
 sudo tee /etc/docker/daemon.json <<-'EOF'
 {
-  "registry-mirrors": ["https://mg43ymuv.mirror.aliyuncs.com"]
+ "registry-mirrors": ["https://docker.1ms.run","https://mg43ymuv.mirror.aliyuncs.com"]
 }
 EOF
 sudo systemctl daemon-reload
